@@ -232,6 +232,7 @@ async function initDatabase() {
         status TINYINT DEFAULT 1,
         reset_token VARCHAR(255) DEFAULT NULL,
         reset_token_expiry DATETIME DEFAULT NULL,
+        used_status TINYINT DEFAULT 0,
         last_login DATETIME,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -1768,28 +1769,33 @@ app.post('/api/auth/forgot-password', async (req, res) => {
   try {
     const { email } = req.body
     if (!email) return res.status(400).json({ error: 'Email is required' })
-    
+
     // 检查邮箱是否存在
     const rows = await query('SELECT id, username FROM admin_users WHERE email = ?', [email]) as any[]
     if (!rows.length) {
       // 为了安全，即使邮箱不存在也返回成功
       return res.json({ success: true, message: 'If the email exists, a reset link will be sent' })
     }
-    
-    // 生成重置令牌
+
+    // 生成重置令牌（32字节，符合最小长度要求）
     const resetToken = crypto.randomBytes(32).toString('hex')
     const resetTokenExpiry = new Date(Date.now() + 3600000) // 1小时后过期
-    
-    // 保存重置令牌到数据库
-    await query('UPDATE admin_users SET reset_token = ?, reset_token_expiry = ? WHERE id = ?', 
-      [resetToken, resetTokenExpiry, rows[0].id])
-    
+
+    // 使用bcrypt对重置令牌进行哈希存储
+    const hashedResetToken = bcrypt.hashSync(resetToken, 10)
+
+    // 保存重置令牌到数据库，并重置使用状态
+    await query('UPDATE admin_users SET reset_token = ?, reset_token_expiry = ?, used_status = 0 WHERE id = ?',
+      [hashedResetToken, resetTokenExpiry, rows[0].id])
+
     // TODO: 发送邮件（这里仅模拟）
-    console.log(`Password reset token for ${email}: ${resetToken}`)
-    
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`Password reset token for ${email}: ${resetToken}`)
+    }
+
     res.json({ success: true, message: 'Password reset link has been sent to your email' })
-  } catch (err: any) { 
-    res.status(500).json({ error: err.message }) 
+  } catch (err: any) {
+    res.status(500).json({ error: err.message })
   }
 })
 
