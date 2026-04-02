@@ -1,18 +1,18 @@
 import { useState, useEffect } from 'react'
-import { Row, Col, Card, Statistic, Table, Tag, Spin } from 'antd'
-import {
-  DatabaseOutlined,
-  TableOutlined,
-  FileTextOutlined,
-  WarningOutlined,
-  ToolOutlined,
-  CrownOutlined,
-  DollarOutlined,
-} from '@ant-design/icons'
-import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, LineChart, Line, Area, AreaChart } from 'recharts'
+import { Row, Col } from 'antd'
 import { dashboardApi, toolApi, membershipApi, adApi } from '../api'
 import AppSkeleton from '../components/Skeleton'
 import type { DashboardStats, DashboardChartData, Tool, MembershipPlan, Ad } from '../types'
+import StatCards from '../components/dashboard/StatCards'
+import ToolStats from '../components/dashboard/ToolStats'
+import MembershipStats from '../components/dashboard/MembershipStats'
+import AdStats from '../components/dashboard/AdStats'
+import CategoryPieChart from '../components/dashboard/CategoryPieChart'
+import OrderStatusPieChart from '../components/dashboard/OrderStatusPieChart'
+import TopProductsChart from '../components/dashboard/TopProductsChart'
+import TableOverview from '../components/dashboard/TableOverview'
+import DailyOrdersChart from '../components/dashboard/DailyOrdersChart'
+import OrderAmountChart from '../components/dashboard/OrderAmountChart'
 
 const COLORS = ['#165DFF', '#00B42A', '#FF7D00', '#F53F3F', '#0d6efd', '#43e97b', '#fa709a', '#fee140']
 

@@ -121,7 +121,7 @@ export default function MainLayout() {
         onCollapse={setCollapsed}
         breakpoint="lg"
         collapsedWidth={60}
-        theme={{ dark: darkMode, darkAlgorithm: true }}
+        theme={darkMode ? 'dark' : 'light'}
         style={{
           overflow: 'auto',
           height: '100vh',
@@ -270,8 +270,8 @@ export default function MainLayout() {
           color: '#fff',
           borderBottom: 0
         }}
-        style={{
-          '--ant-drawer-bg': darkMode ? '#1f1f2f' : '#ffffff'
+        styles={{
+          body: { background: darkMode ? '#1f1f2f' : '#ffffff' }
         }}
       ><div style={{
         padding: '20px 0',
