@@ -1,73 +1,133 @@
-# React + TypeScript + Vite
+# DB Admin - 数据库管理系统
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+一个功能强大的数据库管理系统，提供直观的界面进行数据库操作和监控。
 
-Currently, two official plugins are available:
+## 🚀 技术栈
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **前端**: React + TypeScript + Vite
+- **UI框架**: Ant Design
+- **后端**: Node.js + Express
+- **数据库**: MySQL
+- **构建工具**: Vite
+- **版本控制**: Git
 
-## React Compiler
+## ✨ 核心功能
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### 数据管理
 
-## Expanding the ESLint configuration
+- **表管理**: 创建、删除、清空表，查看表结构和索引
+- **数据浏览**: 查看、编辑、删除数据记录
+- **SQL查询**: 执行SQL语句，支持语法高亮和格式化
+- **批量执行**: 批量执行多条SQL语句
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### 系统监控
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- **操作日志**: 记录所有用户操作，支持日志归档和告警
+- **错误日志**: 记录系统错误，提供详细的错误信息
+- **性能分析**: 通过EXPLAIN分析SQL执行计划
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### 用户管理
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- **权限控制**: 基于角色的访问控制
+- **用户管理**: 创建、编辑、删除用户
+- **密码管理**: 重置密码、修改密码
+
+### 工具集成
+
+- **第三方集成**: 支持与外部系统集成
+- **API管理**: 开放API接口管理
+- **系统配置**: 系统参数配置管理
+
+### 数据分析
+
+- **数据可视化**: 图表展示系统运行状态
+- **趋势分析**: 查看工具使用趋势和数据浏览统计
+
+## 📦 安装和运行
+
+### 环境要求
+
+- Node.js >= 16.0.0
+- MySQL >= 5.7
+
+### 安装依赖
+
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### 启动项目
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+```bash
+# 使用启动脚本（推荐）
+start.bat
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# 或手动启动
+npm start
 ```
+
+### 访问地址
+
+- **前端**: http://localhost:3002
+- **后端API**: http://localhost:3001
+
+## 🔐 登录信息
+
+- **用户名**: admin
+- **密码**: admin123
+
+## 📁 项目结构
+
+```
+├── src/                    # 前端源代码
+│   ├── api/               # API接口定义
+│   ├── components/        # 通用组件
+│   ├── contexts/          # React上下文
+│   ├── hooks/             # 自定义Hooks
+│   ├── layouts/           # 布局组件
+│   ├── pages/             # 页面组件
+│   └── types/             # TypeScript类型定义
+├── server/                # 后端服务
+│   ├── data/              # 数据库文件
+│   └── index.ts           # 服务入口
+├── public/                # 静态资源
+├── docs/                  # 文档
+└── scripts/               # 脚本文件
+```
+
+## 🎨 特色功能
+
+- **响应式设计**: 支持桌面端和移动端
+- **深色模式**: 支持主题切换
+- **全局错误处理**: 统一的错误处理机制
+- **组件化开发**: 模块化的组件设计
+- **类型安全**: 完整的TypeScript类型定义
+
+## 🔧 开发命令
+
+```bash
+# 开发模式
+npm run dev
+
+# 构建生产版本
+npm run build
+
+# 运行后端服务
+npm run server
+
+# 代码检查
+npm run lint
+```
+
+## 📝 版本信息
+
+- **当前版本**: 2026.04.03
+- **最后更新**: 2026年4月3日
+
+## 🤝 贡献指南
+
+欢迎提交Issue和Pull Request！
+
+## 📄 许可证
+
+MIT License
