@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import { ConfigProvider, theme, App } from 'antd'
+import { ConfigProvider, theme, App as AntdApp } from 'antd'
 import zhCN from 'antd/locale/zh_CN'
 import MainLayout from './layouts/MainLayout'
 import Login from './pages/Login'
@@ -64,7 +64,7 @@ export default function App() {
       },
     }}
   >
-    <App>
+    <AntdApp>
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<Login />} />
@@ -93,7 +93,7 @@ export default function App() {
           </Route>
         </Routes>
       </BrowserRouter>
-    </App>
+    </AntdApp>
   </ConfigProvider></ErrorBoundary></ErrorProvider>
   )
 }
