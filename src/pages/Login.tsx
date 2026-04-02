@@ -85,34 +85,33 @@ export default function Login() {
             默认账号: admin / admin123
           </Text>
         </div>
+      </Card>
+      <Modal
+        title="忘记密码"
+        open={forgetPasswordModalVisible}
+        onCancel={() => setForgetPasswordModalVisible(false)}
+        onOk={handleForgetPassword}
+        okText="发送重置链接"
+        cancelText="取消"
+        confirmLoading={forgetPasswordLoading}
+        width={500}
+      >
+        <Form form={forgetPasswordForm} layout="vertical">
+          <Form.Item
+            name="email"
+            label="邮箱地址"
+            rules={[
+              { required: true, message: '请输入邮箱地址' },
+              { type: 'email', message: '请输入有效的邮箱地址' },
+            ]}
+          >
+            <Input placeholder="请输入您的邮箱地址" />
+          </Form.Item>
+          <div style={{ color: '#666', fontSize: 12, marginTop: 8 }}>
+            我们将发送密码重置链接到您的邮箱，请查收并按照提示操作。
+          </div>
+        </Form>
+      </Modal>
     </div>
-      </Card >
-    <Modal
-      title="忘记密码"
-      open={forgetPasswordModalVisible}
-      onCancel={() => setForgetPasswordModalVisible(false)}
-      onOk={handleForgetPassword}
-      okText="发送重置链接"
-      cancelText="取消"
-      confirmLoading={forgetPasswordLoading}
-      width={500}
-    >
-      <Form form={forgetPasswordForm} layout="vertical">
-        <Form.Item
-          name="email"
-          label="邮箱地址"
-          rules={[
-            { required: true, message: '请输入邮箱地址' },
-            { type: 'email', message: '请输入有效的邮箱地址' },
-          ]}
-        >
-          <Input placeholder="请输入您的邮箱地址" />
-        </Form.Item>
-        <div style={{ color: '#666', fontSize: 12, marginTop: 8 }}>
-          我们将发送密码重置链接到您的邮箱，请查收并按照提示操作。
-        </div>
-      </Form>
-    </Modal>
-    </div >
   )
 }
