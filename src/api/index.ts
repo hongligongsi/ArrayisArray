@@ -24,10 +24,10 @@ api.interceptors.response.use(
       return Promise.reject(new Error('登录已过期，请重新登录'))
     }
 
-    const errorMessage = error.response?.data?.message || 
-                        error.response?.data?.error ||
-                        error.message ||
-                        '网络请求失败，请稍后重试'
+    const errorMessage = error.response?.data?.message ||
+      error.response?.data?.error ||
+      error.message ||
+      '网络请求失败，请稍后重试'
 
     return Promise.reject(new Error(errorMessage))
   }
@@ -39,6 +39,7 @@ export const authApi = {
   logout: () => api.post('/auth/logout'),
   me: () => api.get('/auth/me'),
   changePassword: (data: { oldPassword: string; newPassword: string }) => api.put('/auth/password', data),
+  forgotPassword: (data: { email: string }) => api.post('/auth/forgot-password', data),
 }
 
 export const permissionApi = {
