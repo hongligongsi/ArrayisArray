@@ -63,12 +63,22 @@ export interface AuthResponse {
 
 // Dashboard统计数据
 export interface DashboardStats {
-  totalDatabases: number
+  totalDatabases?: number
   totalTables: number
-  totalRecords: number
-  activeUsers: number
-  recentQueries: number
-  systemStatus: 'healthy' | 'warning' | 'critical'
+  totalRecords?: number
+  totalRows: number
+  activeUsers?: number
+  recentQueries?: number
+  operationLogsToday: number
+  errorLogsToday: number
+  systemStatus?: 'healthy' | 'warning' | 'critical'
+  tableList: Array<{
+    tableName: string
+    rowCount: number
+    tableComment: string
+    engine: string
+    createTime: string
+  }>
 }
 
 // Dashboard图表数据

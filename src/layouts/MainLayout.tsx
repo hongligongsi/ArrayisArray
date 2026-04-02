@@ -261,17 +261,16 @@ export default function MainLayout() {
       </Layout>{/* 移动端菜单抽屉 */}<Drawer
         title="菜单"
         placement="left"
-        width={280}
+        size={280}
         open={mobileMenuOpen}
         onClose={() => setMobileMenuOpen(false)}
-        bodyStyle={{ padding: 0 }}
-        headerStyle={{
-          background: darkMode ? 'linear-gradient(135deg, #165DFF 0%, #0d6efd 100%)' : 'linear-gradient(135deg, #165DFF 0%, #0d6efd 100%)',
-          color: '#fff',
-          borderBottom: 0
-        }}
         styles={{
-          body: { background: darkMode ? '#1f1f2f' : '#ffffff' }
+          body: { padding: 0, background: darkMode ? '#1f1f2f' : '#ffffff' },
+          header: {
+            background: darkMode ? 'linear-gradient(135deg, #165DFF 0%, #0d6efd 100%)' : 'linear-gradient(135deg, #165DFF 0%, #0d6efd 100%)',
+            color: '#fff',
+            borderBottom: 0
+          }
         }}
       ><div style={{
         padding: '20px 0',
