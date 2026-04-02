@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Outlet, useNavigate, useLocation } from 'react-router-dom'
-import { Layout, Menu, Badge, Dropdown, Button, Avatar, theme, Space, Switch, Tooltip } from 'antd'
+import { Layout, Menu, Badge, Dropdown, Button, Avatar, theme, Space, Switch, Tooltip, Drawer } from 'antd'
 import {
   DashboardOutlined,
   DatabaseOutlined,
@@ -241,7 +241,58 @@ export default function MainLayout() {
           <Outlet />
           <KeyboardShortcuts />
         </Content>
-      </Layout>
-    </Layout>
+      </Layout>{/* 移动端菜单抽屉 */}<Drawer
+        title="菜单"
+        placement="left"
+        width={280}
+        open={mobileMenuOpen}
+        onClose={() => setMobileMenuOpen(false)}
+        bodyStyle={{ padding: 0 }}
+        headerStyle={{
+          background: darkMode ? 'linear-gradient(135deg, #165DFF 0%, #0d6efd 100%)' : 'linear-gradient(135deg, #165DFF 0%, #0d6efd 100%)',
+          color: '#fff',
+          borderBottom: 0
+        }}
+        style={{
+          '--ant-drawer-bg': darkMode ? '#1f1f2f' : '#ffffff'
+        }}
+      ><div style={{
+          padding: '20px 0',
+          display: 'flex',
+          flexDirection: 'column',
+          height: '100%'
+        }}><div style={{
+            padding: '0 20px 20px',
+            borderBottom: darkMode ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(0,0,0,0.06)'
+          }}><div style={{
+                display: 'flex',
+                alignItems: 'center',
+                marginBottom: 16
+              }}><DatabaseOutlined style={{ fontSize: 24, color: '#165DFF', marginRight: 12 }} /><span style={{ fontSize: 18, fontWeight: 600, color: darkMode ? '#fff' : '#262626' }}>DB Admin</span></div><div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between'
+              }}><span style={{ fontSize: 14, color: darkMode ? '#8c8cf8' : '#595959' }}>主题模式</span><Switch
+                  checkedChildren={<MoonOutlined />}
+                  unCheckedChildren={<SunOutlined />}
+                  checked={darkMode}
+                  onChange={toggleTheme}
+                  size="small"
+                /></div></div><Menu
+          theme={darkMode ? 'dark' : 'light'}
+          mode="inline"
+          selectedKeys={selectedKeys}
+          items={menuItems}
+          onClick={({ key }) => {
+            navigate(key)
+            setMobileMenuOpen(false)
+          }}
+          style={{
+            borderRight: 0,
+            background: 'transparent',
+            fontSize: 14,
+            flex: 1
+          }}
+        /></div></Drawer></Layout>
   )
 }

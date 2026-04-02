@@ -21,8 +21,15 @@ api.interceptors.response.use(
       localStorage.removeItem('token')
       localStorage.removeItem('user')
       window.location.href = '/login'
+      return Promise.reject(new Error('登录已过期，请重新登录'))
     }
-    return Promise.reject(error.response?.data || error)
+
+    const errorMessage = error.response?.data?.message || 
+                        error.response?.data?.error ||
+                        error.message ||
+                        '网络请求失败，请稍后重试'
+
+    return Promise.reject(new Error(errorMessage))
   }
 )
 

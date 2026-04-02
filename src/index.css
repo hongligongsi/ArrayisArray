@@ -127,6 +127,7 @@ body {
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* 移动端响应式设计 */
 @media (max-width: 768px) {
   .ant-card-head-title {
     font-size: 14px !important;
@@ -142,6 +143,48 @@ body {
 
   .ant-card {
     border-radius: 6px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .ant-row {
+    margin: 0 -6px !important;
+  }
+
+  .ant-col {
+    padding: 0 6px !important;
+  }
+
+  .ant-table {
+    font-size: 12px !important;
+  }
+
+  .ant-table-thead > tr > th {
+    font-size: 12px !important;
+    padding: 8px 6px !important;
+  }
+
+  .ant-table-tbody > tr > td {
+    padding: 8px 6px !important;
+  }
+
+  .ant-btn {
+    font-size: 12px !important;
+    padding: 4px 12px !important;
+  }
+
+  .ant-input {
+    font-size: 12px !important;
+    padding: 6px 12px !important;
+  }
+
+  .ant-modal {
+    margin: 10px !important;
+    max-width: calc(100% - 20px) !important;
+  }
+
+  .ant-drawer {
+    width: 90% !important;
+    max-width: 400px !important;
   }
 }
 
@@ -149,5 +192,92 @@ body {
   .ant-layout-content {
     margin: 8px !important;
     padding: 12px !important;
+  }
+
+  .ant-card {
+    margin-bottom: 8px !important;
+  }
+
+  .ant-statistic {
+    padding: 8px !important;
+  }
+
+  .ant-statistic-content {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+
+  .ant-statistic-title {
+    margin-bottom: 4px !important;
+  }
+
+  .ant-table-wrapper {
+    overflow-x: auto !important;
+  }
+
+  .ant-menu-item {
+    font-size: 14px !important;
+  }
+
+  .ant-layout-header {
+    padding: 0 12px !important;
+  }
+
+  .ant-btn {
+    min-width: auto !important;
+  }
+
+  .ant-select-selector {
+    padding: 6px 12px !important;
+    font-size: 12px !important;
+  }
+
+  .ant-tabs-tab {
+    font-size: 12px !important;
+    padding: 8px 12px !important;
+  }
+
+  .ant-input-affix-wrapper {
+    padding: 6px 12px !important;
+  }
+}
+
+/* 横屏优化 */
+@media (max-height: 600px) and (orientation: landscape) {
+  .ant-layout-content {
+    margin: 8px !important;
+    padding: 16px !important;
+  }
+
+  .ant-card {
+    margin-bottom: 8px !important;
+  }
+
+  .ant-statistic-content-value {
+    font-size: 18px !important;
+  }
+}
+
+/* 触摸优化 */
+@media (hover: none) and (pointer: coarse) {
+  .ant-btn {
+    min-height: 44px !important;
+    min-width: 44px !important;
+  }
+
+  .ant-menu-item {
+    min-height: 44px !important;
+    line-height: 44px !important;
+  }
+
+  .ant-checkbox-wrapper,
+  .ant-radio-wrapper {
+    min-height: 44px !important;
+    padding: 8px !important;
+  }
+
+  .ant-input,
+  .ant-select-selector {
+    min-height: 44px !important;
   }
 }

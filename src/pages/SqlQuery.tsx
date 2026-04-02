@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { Card, Table, Button, Space, message, Tag, Tabs, Typography, Modal, Input, Alert, Descriptions, Drawer, Tooltip } from 'antd'
+import { Card, Table, Button, Space, message, Tag, Tabs, Typography, Modal, Input, Alert, Drawer, Tooltip } from 'antd'
 import { PlayCircleOutlined, FormatPainterOutlined, ClearOutlined, HistoryOutlined, CheckCircleOutlined, ThunderboltOutlined, CodeOutlined, CloseCircleOutlined, ClockCircleOutlined, FileTextOutlined } from '@ant-design/icons'
 import { format as sqlFormat } from 'sql-formatter'
 import { sqlApi, connectionApi } from '../api'

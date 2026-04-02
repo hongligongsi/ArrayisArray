@@ -241,47 +241,67 @@ const AnalyticsPage: React.FC = () => {
                                 {toolTrendData && (
                                     <Card title="工具使用趋势">
                                         <ResponsiveContainer width="100%" height={400}>
-                                            <LineChart data={toolTrendData.sqlQuery}>
-                                                <CartesianGrid strokeDasharray="3 3" />
-                                                <XAxis dataKey="date" />
-                                                <YAxis />
-                                                <EchartsTooltip />
-                                                <Legend />
-                                                <Line type="monotone" dataKey="count" name="SQL查询" stroke="#1890ff" activeDot={{ r: 8 }} />
-                                                {Array.isArray(toolTrendData.dataBrowser) && toolTrendData.dataBrowser.map((item, index) => {
+                                            {Array.isArray(toolTrendData.dataBrowser) ? (
+                                                <LineChart data={toolTrendData.dataBrowser.map((item) => {
                                                     const sqlItem = toolTrendData.sqlQuery.find(i => i.date === item.date)
                                                     return {
                                                         date: item.date,
                                                         'SQL查询': sqlItem?.count || 0,
                                                         '数据浏览': item.count,
                                                     }
-                                                }).forEach(item => {
-                                                    // 这里需要重新构建数据结构
-                                                })}
-                                            </LineChart>
-                                        </ResponsiveContainer>
-
-                                        <div style={{ marginTop: 24 }}>
-                                            <ResponsiveContainer width="100%" height={400}>
-                                                <BarChart data={toolTrendData.sqlQuery}>
+                                                })}>
                                                     <CartesianGrid strokeDasharray="3 3" />
                                                     <XAxis dataKey="date" />
                                                     <YAxis />
                                                     <EchartsTooltip />
                                                     <Legend />
-                                                    <Bar dataKey="count" name="SQL查询" fill="#1890ff" />
-                                                    {Array.isArray(toolTrendData.dataBrowser) && toolTrendData.dataBrowser.map((item, index) => {
+                                                    <Line type="monotone" dataKey="SQL查询" name="SQL查询" stroke="#1890ff" activeDot={{ r: 8 }} />
+                                                    <Line type="monotone" dataKey="数据浏览" name="数据浏览" stroke="#52c41a" />
+                                                </LineChart>
+                                            ) : (
+                                                <LineChart data={toolTrendData.sqlQuery}>
+                                                    <CartesianGrid strokeDasharray="3 3" />
+                                                    <XAxis dataKey="date" />
+                                                    <YAxis />
+                                                    <EchartsTooltip />
+                                                    <Legend />
+                                                    <Line type="monotone" dataKey="count" name="SQL查询" stroke="#1890ff" activeDot={{ r: 8 }} />
+                                                </LineChart>
+                                            )}
+                                        </ResponsiveContainer>
+
+                                        <div style={{ marginTop: 24 }}>
+                                            <ResponsiveContainer width="100%" height={400}>
+                                                {Array.isArray(toolTrendData.dataBrowser) ? (
+                                                    <BarChart data={toolTrendData.dataBrowser.map((item) => {
                                                         const sqlItem = toolTrendData.sqlQuery.find(i => i.date === item.date)
+                                                        const tableItem = toolTrendData.tableManager.find(i => i.date === item.date)
                                                         return {
                                                             date: item.date,
                                                             'SQL查询': sqlItem?.count || 0,
                                                             '数据浏览': item.count,
-                                                            '表管理': toolTrendData.tableManager.find(i => i.date === item.date)?.count || 0,
+                                                            '表管理': tableItem?.count || 0,
                                                         }
-                                                    }).forEach(item => {
-                                                        // 这里需要重新构建数据结构
-                                                    })}
-                                                </BarChart>
+                                                    })}>
+                                                        <CartesianGrid strokeDasharray="3 3" />
+                                                        <XAxis dataKey="date" />
+                                                        <YAxis />
+                                                        <EchartsTooltip />
+                                                        <Legend />
+                                                        <Bar dataKey="SQL查询" name="SQL查询" fill="#1890ff" />
+                                                        <Bar dataKey="数据浏览" name="数据浏览" fill="#52c41a" />
+                                                        <Bar dataKey="表管理" name="表管理" fill="#faad14" />
+                                                    </BarChart>
+                                                ) : (
+                                                    <BarChart data={toolTrendData.sqlQuery}>
+                                                        <CartesianGrid strokeDasharray="3 3" />
+                                                        <XAxis dataKey="date" />
+                                                        <YAxis />
+                                                        <EchartsTooltip />
+                                                        <Legend />
+                                                        <Bar dataKey="count" name="SQL查询" fill="#1890ff" />
+                                                    </BarChart>
+                                                )}
                                             </ResponsiveContainer>
                                         </div>
                                     </Card>
