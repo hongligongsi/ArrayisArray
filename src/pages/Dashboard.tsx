@@ -37,11 +37,11 @@ export default function Dashboard() {
         membershipApi.getPlans(),
         adApi.getAds(),
       ])
-      setStats(s)
-      setChartData(c)
-      setTools(tRes.tools || [])
-      setPlans(pRes.plans || [])
-      setAds(aRes.ads || [])
+      setStats(s || {})
+      setChartData(c || {})
+      setTools(Array.isArray(tRes?.tools) ? tRes.tools : [])
+      setPlans(Array.isArray(pRes?.plans) ? pRes.plans : [])
+      setAds(Array.isArray(aRes?.ads) ? aRes.ads : [])
     } catch (err) {
       console.error('加载数据失败:', err)
     } finally {
@@ -131,7 +131,7 @@ export default function Dashboard() {
               value={ads.reduce((sum: number, a: any) => sum + (a.click_count || 0), 0) / (ads.reduce((sum: number, a: any) => sum + (a.impression_count || 0), 0) || 1) * 100}
               suffix="%"
               prefix={<DollarOutlined />}
-              valueStyle={{ color: '#FF7D00' }}
+              styles={{ content: { color: '#FF7D00' } }}
               precision={2}
             />
           </Card>
@@ -187,7 +187,7 @@ export default function Dashboard() {
           <Card title="数据表概览" size="small" style={{ borderRadius: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
             <Table
               columns={tableColumns}
-              dataSource={stats?.tableList || []}
+              dataSource={Array.isArray(stats?.tableList) ? stats.tableList : []}
               rowKey="tableName"
               size="small"
               pagination={false}

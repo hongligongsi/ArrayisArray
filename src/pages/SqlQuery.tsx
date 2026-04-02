@@ -5,7 +5,7 @@ import { format as sqlFormat } from 'sql-formatter'
 import { sqlApi, connectionApi } from '../api'
 import type { QueryResult } from '../types'
 
-const { Text, TextArea } = Typography
+const { Text } = Typography
 
 interface HistoryItem {
   sql: string
@@ -536,7 +536,7 @@ export default function SqlQuery() {
         <div style={{ marginBottom: 16 }}>
           <Text type="secondary">每行一条 SQL 语句，按顺序执行</Text>
         </div>
-        <TextArea
+        <Input.TextArea
           value={batchSqls}
           onChange={(e) => setBatchSqls(e.target.value)}
           placeholder="在此输入多条 SQL 语句，每行一条..."
@@ -577,7 +577,7 @@ export default function SqlQuery() {
       <Drawer
         title="查询历史记录"
         placement="right"
-        width={1200}
+        size="large"
         open={historyDrawerVisible}
         onClose={() => setHistoryDrawerVisible(false)}
       >

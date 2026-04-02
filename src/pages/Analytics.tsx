@@ -6,7 +6,6 @@ import { analyticsApi } from '../api'
 import dayjs from 'dayjs'
 
 const { RangePicker } = DatePicker
-const { TabPane } = Tabs
 
 interface PerformanceData {
     totalRequests: number
@@ -133,256 +132,270 @@ const AnalyticsPage: React.FC = () => {
                 </Space>
             </div>
 
-            <Tabs activeKey={activeTab} onChange={setActiveTab}>
-                <TabPane tab={<><LineChartOutlined /> 性能监控</>} key="performance">
-                    <Spin spinning={loading} tip="加载中...">
-                        {performanceData && (
-                            <>
-                                <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
-                                    <Col span={6}>
-                                        <Card>
-                                            <Statistic
-                                                title="总请求数"
-                                                value={performanceData.totalRequests}
-                                                prefix={<ClockCircleOutlined />}
-                                            />
-                                        </Card>
-                                    </Col>
-                                    <Col span={6}>
-                                        <Card>
-                                            <Statistic
-                                                title="平均响应时间"
-                                                value={performanceData.avgResponseTime.toFixed(2)}
-                                                suffix="ms"
-                                            />
-                                        </Card>
-                                    </Col>
-                                    <Col span={6}>
-                                        <Card>
-                                            <Statistic
-                                                title="错误率"
-                                                value={(performanceData.errorRate * 100).toFixed(2)}
-                                                suffix="%"
-                                                valueStyle={{ color: performanceData.errorRate > 0.1 ? '#ff4d4f' : '#52c41a' }}
-                                            />
-                                        </Card>
-                                    </Col>
-                                    <Col span={6}>
-                                        <Card>
-                                            <Statistic
-                                                title="总响应时间"
-                                                value={(performanceData.totalResponseTime / 1000).toFixed(2)}
-                                                suffix="s"
-                                            />
-                                        </Card>
-                                    </Col>
-                                </Row>
+            <Tabs
+                activeKey={activeTab}
+                onChange={setActiveTab}
+                items={[
+                    {
+                        key: 'performance',
+                        label: <><LineChartOutlined /> 性能监控</>,
+                        children: (
+                            <Spin spinning={loading} description="加载中...">
+                                {performanceData && (
+                                    <>
+                                        <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
+                                            <Col span={6}>
+                                                <Card>
+                                                    <Statistic
+                                                        title="总请求数"
+                                                        value={performanceData.totalRequests}
+                                                        prefix={<ClockCircleOutlined />}
+                                                    />
+                                                </Card>
+                                            </Col>
+                                            <Col span={6}>
+                                                <Card>
+                                                    <Statistic
+                                                        title="平均响应时间"
+                                                        value={performanceData.avgResponseTime.toFixed(2)}
+                                                        suffix="ms"
+                                                    />
+                                                </Card>
+                                            </Col>
+                                            <Col span={6}>
+                                                <Card>
+                                                    <Statistic
+                                                        title="错误率"
+                                                        value={(performanceData.errorRate * 100).toFixed(2)}
+                                                        suffix="%"
+                                                        styles={{ content: { color: performanceData.errorRate > 0.1 ? '#ff4d4f' : '#52c41a' } }}
+                                                    />
+                                                </Card>
+                                            </Col>
+                                            <Col span={6}>
+                                                <Card>
+                                                    <Statistic
+                                                        title="总响应时间"
+                                                        value={(performanceData.totalResponseTime / 1000).toFixed(2)}
+                                                        suffix="s"
+                                                    />
+                                                </Card>
+                                            </Col>
+                                        </Row>
 
-                                <Card title="端点性能排行" style={{ marginBottom: 24 }}>
-                                    <Table
-                                        columns={[
-                                            {
-                                                title: '端点',
-                                                dataIndex: 'endpoint',
-                                                key: 'endpoint',
-                                            },
-                                            {
-                                                title: '请求数',
-                                                dataIndex: 'totalRequests',
-                                                key: 'totalRequests',
-                                                sorter: (a: any, b: any) => a.totalRequests - b.totalRequests,
-                                            },
-                                            {
-                                                title: '平均响应时间 (ms)',
-                                                dataIndex: 'avgResponseTime',
-                                                key: 'avgResponseTime',
-                                                sorter: (a: any, b: any) => a.avgResponseTime - b.avgResponseTime,
-                                                render: (value: number) => value.toFixed(2),
-                                            },
-                                            {
-                                                title: '最大响应时间 (ms)',
-                                                dataIndex: 'maxResponseTime',
-                                                key: 'maxResponseTime',
-                                                sorter: (a: any, b: any) => a.maxResponseTime - b.maxResponseTime,
-                                                render: (value: number) => value.toFixed(2),
-                                            },
-                                            {
-                                                title: '错误数',
-                                                dataIndex: 'errorCount',
-                                                key: 'errorCount',
-                                                sorter: (a: any, b: any) => a.errorCount - b.errorCount,
-                                                render: (value: number) => (
-                                                    <Tag color={value > 0 ? 'error' : 'success'}>{value}</Tag>
-                                                ),
-                                            },
-                                        ]}
-                                        dataSource={performanceData.endpointStats.map(([endpoint, stats], index) => ({
-                                            key: index,
-                                            endpoint,
-                                            ...stats,
-                                        }))}
-                                    />
-                                </Card>
-                            </>
-                        )}
-                    </Spin>
-                </TabPane>
-
-                <TabPane tab={<><BarChartOutlined /> 工具趋势</>} key="trends">
-                    <Spin spinning={loading} tip="加载中...">
-                        {toolTrendData && (
-                            <Card title="工具使用趋势">
-                                <ResponsiveContainer width="100%" height={400}>
-                                    <LineChart data={toolTrendData.sqlQuery}>
-                                        <CartesianGrid strokeDasharray="3 3" />
-                                        <XAxis dataKey="date" />
-                                        <YAxis />
-                                        <EchartsTooltip />
-                                        <Legend />
-                                        <Line type="monotone" dataKey="count" name="SQL查询" stroke="#1890ff" activeDot={{ r: 8 }} />
-                                        {toolTrendData.dataBrowser.map((item, index) => {
-                                            const sqlItem = toolTrendData.sqlQuery.find(i => i.date === item.date)
-                                            return {
-                                                date: item.date,
-                                                'SQL查询': sqlItem?.count || 0,
-                                                '数据浏览': item.count,
-                                            }
-                                        }).forEach(item => {
-                                            // 这里需要重新构建数据结构
-                                        })}
-                                    </LineChart>
-                                </ResponsiveContainer>
-
-                                <div style={{ marginTop: 24 }}>
-                                    <ResponsiveContainer width="100%" height={400}>
-                                        <BarChart data={toolTrendData.sqlQuery}>
-                                            <CartesianGrid strokeDasharray="3 3" />
-                                            <XAxis dataKey="date" />
-                                            <YAxis />
-                                            <EchartsTooltip />
-                                            <Legend />
-                                            <Bar dataKey="count" name="SQL查询" fill="#1890ff" />
-                                            {toolTrendData.dataBrowser.map((item, index) => {
-                                                const sqlItem = toolTrendData.sqlQuery.find(i => i.date === item.date)
-                                                return {
-                                                    date: item.date,
-                                                    'SQL查询': sqlItem?.count || 0,
-                                                    '数据浏览': item.count,
-                                                    '表管理': toolTrendData.tableManager.find(i => i.date === item.date)?.count || 0,
-                                                }
-                                            }).forEach(item => {
-                                                // 这里需要重新构建数据结构
-                                            })}
-                                        </BarChart>
-                                    </ResponsiveContainer>
-                                </div>
-                            </Card>
-                        )}
-                    </Spin>
-                </TabPane>
-
-                <TabPane tab={<><AlertOutlined /> 异常告警</>} key="anomalies">
-                    <Spin spinning={loading} tip="加载中...">
-                        {anomalyData && (
-                            <>
-                                <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
-                                    <Col span={8}>
-                                        <Card>
-                                            <Statistic
-                                                title="总异常数"
-                                                value={anomalyData.totalAnomalies}
-                                                prefix={<AlertOutlined />}
-                                                valueStyle={{ color: anomalyData.totalAnomalies > 0 ? '#ff4d4f' : '#52c41a' }}
+                                        <Card title="端点性能排行" style={{ marginBottom: 24 }}>
+                                            <Table
+                                                columns={[
+                                                    {
+                                                        title: '端点',
+                                                        dataIndex: 'endpoint',
+                                                        key: 'endpoint',
+                                                    },
+                                                    {
+                                                        title: '请求数',
+                                                        dataIndex: 'totalRequests',
+                                                        key: 'totalRequests',
+                                                        sorter: (a: any, b: any) => a.totalRequests - b.totalRequests,
+                                                    },
+                                                    {
+                                                        title: '平均响应时间 (ms)',
+                                                        dataIndex: 'avgResponseTime',
+                                                        key: 'avgResponseTime',
+                                                        sorter: (a: any, b: any) => a.avgResponseTime - b.avgResponseTime,
+                                                        render: (value: number) => value.toFixed(2),
+                                                    },
+                                                    {
+                                                        title: '最大响应时间 (ms)',
+                                                        dataIndex: 'maxResponseTime',
+                                                        key: 'maxResponseTime',
+                                                        sorter: (a: any, b: any) => a.maxResponseTime - b.maxResponseTime,
+                                                        render: (value: number) => value.toFixed(2),
+                                                    },
+                                                    {
+                                                        title: '错误数',
+                                                        dataIndex: 'errorCount',
+                                                        key: 'errorCount',
+                                                        sorter: (a: any, b: any) => a.errorCount - b.errorCount,
+                                                        render: (value: number) => (
+                                                            <Tag color={value > 0 ? 'error' : 'success'}>{value}</Tag>
+                                                        ),
+                                                    },
+                                                ]}
+                                                dataSource={Array.isArray(performanceData.endpointStats) ? performanceData.endpointStats.map(([endpoint, stats], index) => ({
+                                                    key: index,
+                                                    endpoint,
+                                                    ...stats,
+                                                })) : []}
                                             />
                                         </Card>
-                                    </Col>
-                                    <Col span={8}>
-                                        <Card>
-                                            <Statistic
-                                                title="严重异常"
-                                                value={anomalyData.criticalAnomalies}
-                                                prefix={<ExclamationCircleOutlined style={{ color: '#ff4d4f' }} />}
-                                                valueStyle={{ color: '#ff4d4f' }}
-                                            />
-                                        </Card>
-                                    </Col>
-                                    <Col span={8}>
-                                        <Card>
-                                            <Statistic
-                                                title="警告异常"
-                                                value={anomalyData.warningAnomalies}
-                                                prefix={<WarningOutlined style={{ color: '#faad14' }} />}
-                                                valueStyle={{ color: '#faad14' }}
-                                            />
-                                        </Card>
-                                    </Col>
-                                </Row>
-
-                                <Card title="异常列表">
-                                    <Table
-                                        columns={[
-                                            {
-                                                title: '类型',
-                                                dataIndex: 'type',
-                                                key: 'type',
-                                                render: (type: string) => getAnomalyTypeText(type),
-                                            },
-                                            {
-                                                title: '端点',
-                                                dataIndex: 'endpoint',
-                                                key: 'endpoint',
-                                                render: (endpoint: string) => endpoint || '-',
-                                            },
-                                            {
-                                                title: '详情',
-                                                dataIndex: 'details',
-                                                key: 'details',
-                                                render: (_, record: any) => {
-                                                    if (record.type === 'high_response_time') {
-                                                        return `${record.responseTime.toFixed(2)}ms (阈值: ${record.threshold}ms)`
-                                                    } else if (record.type === 'high_error_rate') {
-                                                        return `${record.errorRate}% (${record.errorCount}/${record.totalRequests})`
-                                                    } else if (record.type === 'high_request_rate') {
-                                                        return `${record.requestCount}次/小时 (阈值: ${record.threshold}次)`
+                                    </>
+                                )}
+                            </Spin>
+                        ),
+                    },
+                    {
+                        key: 'trends',
+                        label: <><BarChartOutlined /> 工具趋势</>,
+                        children: (
+                            <Spin spinning={loading} description="加载中...">
+                                {toolTrendData && (
+                                    <Card title="工具使用趋势">
+                                        <ResponsiveContainer width="100%" height={400}>
+                                            <LineChart data={toolTrendData.sqlQuery}>
+                                                <CartesianGrid strokeDasharray="3 3" />
+                                                <XAxis dataKey="date" />
+                                                <YAxis />
+                                                <EchartsTooltip />
+                                                <Legend />
+                                                <Line type="monotone" dataKey="count" name="SQL查询" stroke="#1890ff" activeDot={{ r: 8 }} />
+                                                {Array.isArray(toolTrendData.dataBrowser) && toolTrendData.dataBrowser.map((item, index) => {
+                                                    const sqlItem = toolTrendData.sqlQuery.find(i => i.date === item.date)
+                                                    return {
+                                                        date: item.date,
+                                                        'SQL查询': sqlItem?.count || 0,
+                                                        '数据浏览': item.count,
                                                     }
-                                                    return '-'
-                                                },
-                                            },
-                                            {
-                                                title: '时间',
-                                                dataIndex: 'timestamp',
-                                                key: 'timestamp',
-                                                render: (timestamp: number, record: any) => {
-                                                    if (record.hour) {
-                                                        return record.hour
-                                                    } else if (timestamp) {
-                                                        return dayjs(timestamp).format('YYYY-MM-DD HH:mm:ss')
-                                                    }
-                                                    return '-'
-                                                },
-                                            },
-                                            {
-                                                title: '严重程度',
-                                                dataIndex: 'severity',
-                                                key: 'severity',
-                                                render: (severity: string) => (
-                                                    <Tag color={getAnomalySeverityColor(severity)}>
-                                                        {severity === 'critical' ? '严重' : '警告'}
-                                                    </Tag>
-                                                ),
-                                            },
-                                        ]}
-                                        dataSource={anomalyData.anomalies.map((anomaly, index) => ({
-                                            key: index,
-                                            ...anomaly,
-                                        }))}
-                                    />
-                                </Card>
-                            </>
-                        )}
-                    </Spin>
-                </TabPane>
-            </Tabs>
+                                                }).forEach(item => {
+                                                    // 这里需要重新构建数据结构
+                                                })}
+                                            </LineChart>
+                                        </ResponsiveContainer>
+
+                                        <div style={{ marginTop: 24 }}>
+                                            <ResponsiveContainer width="100%" height={400}>
+                                                <BarChart data={toolTrendData.sqlQuery}>
+                                                    <CartesianGrid strokeDasharray="3 3" />
+                                                    <XAxis dataKey="date" />
+                                                    <YAxis />
+                                                    <EchartsTooltip />
+                                                    <Legend />
+                                                    <Bar dataKey="count" name="SQL查询" fill="#1890ff" />
+                                                    {Array.isArray(toolTrendData.dataBrowser) && toolTrendData.dataBrowser.map((item, index) => {
+                                                        const sqlItem = toolTrendData.sqlQuery.find(i => i.date === item.date)
+                                                        return {
+                                                            date: item.date,
+                                                            'SQL查询': sqlItem?.count || 0,
+                                                            '数据浏览': item.count,
+                                                            '表管理': toolTrendData.tableManager.find(i => i.date === item.date)?.count || 0,
+                                                        }
+                                                    }).forEach(item => {
+                                                        // 这里需要重新构建数据结构
+                                                    })}
+                                                </BarChart>
+                                            </ResponsiveContainer>
+                                        </div>
+                                    </Card>
+                                )}
+                            </Spin>
+                        ),
+                    },
+                    {
+                        key: 'anomalies',
+                        label: <><AlertOutlined /> 异常告警</>,
+                        children: (
+                            <Spin spinning={loading} description="加载中...">
+                                {anomalyData && (
+                                    <>
+                                        <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
+                                            <Col span={8}>
+                                                <Card>
+                                                    <Statistic
+                                                        title="总异常数"
+                                                        value={anomalyData.totalAnomalies}
+                                                        prefix={<AlertOutlined />}
+                                                        styles={{ content: { color: anomalyData.totalAnomalies > 0 ? '#ff4d4f' : '#52c41a' } }}
+                                                    />
+                                                </Card>
+                                            </Col>
+                                            <Col span={8}>
+                                                <Card>
+                                                    <Statistic
+                                                        title="严重异常"
+                                                        value={anomalyData.criticalAnomalies}
+                                                        prefix={<ExclamationCircleOutlined style={{ color: '#ff4d4f' }} />}
+                                                        styles={{ content: { color: '#ff4d4f' } }}
+                                                    />
+                                                </Card>
+                                            </Col>
+                                            <Col span={8}>
+                                                <Card>
+                                                    <Statistic
+                                                        title="警告异常"
+                                                        value={anomalyData.warningAnomalies}
+                                                        prefix={<WarningOutlined style={{ color: '#faad14' }} />}
+                                                        styles={{ content: { color: '#faad14' } }}
+                                                    />
+                                                </Card>
+                                            </Col>
+                                        </Row>
+
+                                        <Card title="异常列表">
+                                            <Table
+                                                columns={[
+                                                    {
+                                                        title: '类型',
+                                                        dataIndex: 'type',
+                                                        key: 'type',
+                                                        render: (type: string) => getAnomalyTypeText(type),
+                                                    },
+                                                    {
+                                                        title: '端点',
+                                                        dataIndex: 'endpoint',
+                                                        key: 'endpoint',
+                                                        render: (endpoint: string) => endpoint || '-',
+                                                    },
+                                                    {
+                                                        title: '详情',
+                                                        dataIndex: 'details',
+                                                        key: 'details',
+                                                        render: (_, record: any) => {
+                                                            if (record.type === 'high_response_time') {
+                                                                return `${record.responseTime.toFixed(2)}ms (阈值: ${record.threshold}ms)`
+                                                            } else if (record.type === 'high_error_rate') {
+                                                                return `${record.errorRate}% (${record.errorCount}/${record.totalRequests})`
+                                                            } else if (record.type === 'high_request_rate') {
+                                                                return `${record.requestCount}次/小时 (阈值: ${record.threshold}次)`
+                                                            }
+                                                            return '-'
+                                                        },
+                                                    },
+                                                    {
+                                                        title: '时间',
+                                                        dataIndex: 'timestamp',
+                                                        key: 'timestamp',
+                                                        render: (timestamp: number, record: any) => {
+                                                            if (record.hour) {
+                                                                return record.hour
+                                                            } else if (timestamp) {
+                                                                return dayjs(timestamp).format('YYYY-MM-DD HH:mm:ss')
+                                                            }
+                                                            return '-'
+                                                        },
+                                                    },
+                                                    {
+                                                        title: '严重程度',
+                                                        dataIndex: 'severity',
+                                                        key: 'severity',
+                                                        render: (severity: string) => (
+                                                            <Tag color={getAnomalySeverityColor(severity)}>
+                                                                {severity === 'critical' ? '严重' : '警告'}
+                                                            </Tag>
+                                                        ),
+                                                    },
+                                                ]}
+                                                dataSource={Array.isArray(anomalyData.anomalies) ? anomalyData.anomalies.map((anomaly, index) => ({
+                                                    key: index,
+                                                    ...anomaly,
+                                                })) : []}
+                                            />
+                                        </Card>
+                                    </>
+                                )}
+                            </Spin>
+                        ),
+                    },
+                ]}
+            />
         </div>
     )
 }
