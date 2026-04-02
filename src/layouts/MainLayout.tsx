@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Outlet, useNavigate, useLocation } from 'react-router-dom'
-import { Layout, Menu, Badge, Dropdown, Button, Avatar, theme, Space, Switch, Tooltip, Drawer } from 'antd'
+import { Layout, Menu, Badge, Dropdown, Button, Avatar, theme, Space, Switch, Tooltip, Drawer, Modal, Form, Input, message } from 'antd'
 import {
   DashboardOutlined,
   DatabaseOutlined,
@@ -39,6 +39,9 @@ export default function MainLayout() {
   const [collapsed, setCollapsed] = useState(false)
   const [user, setUser] = useState<any>(null)
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem('theme') === 'dark')
+  const [changePasswordModalVisible, setChangePasswordModalVisible] = useState(false)
+  const [changePasswordForm] = Form.useForm()
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   useEffect(() => {
     const u = localStorage.getItem('user')
@@ -58,6 +61,18 @@ export default function MainLayout() {
     localStorage.removeItem('token')
     localStorage.removeItem('user')
     navigate('/login', { replace: true })
+  }
+
+  const handleChangePassword = async () => {
+    try {
+      const values = await changePasswordForm.validateFields()
+      await authApi.changePassword(values)
+      message.success('密码修改成功，请重新登录')
+      setChangePasswordModalVisible(false)
+      handleLogout()
+    } catch (err: any) {
+      message.error(err.message || '密码修改失败')
+    }
   }
 
   const menuItems = [
@@ -90,6 +105,8 @@ export default function MainLayout() {
 
   const userMenu = {
     items: [
+      { key: 'changePassword', icon: <KeyOutlined />, label: '修改密码', onClick: () => setChangePasswordModalVisible(true) },
+      { type: 'divider' as const },
       { key: 'logout', icon: <LogoutOutlined />, label: '退出登录', onClick: handleLogout },
     ],
   }
@@ -257,42 +274,91 @@ export default function MainLayout() {
           '--ant-drawer-bg': darkMode ? '#1f1f2f' : '#ffffff'
         }}
       ><div style={{
-          padding: '20px 0',
-          display: 'flex',
-          flexDirection: 'column',
-          height: '100%'
-        }}><div style={{
-            padding: '0 20px 20px',
-            borderBottom: darkMode ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(0,0,0,0.06)'
-          }}><div style={{
-                display: 'flex',
-                alignItems: 'center',
-                marginBottom: 16
-              }}><DatabaseOutlined style={{ fontSize: 24, color: '#165DFF', marginRight: 12 }} /><span style={{ fontSize: 18, fontWeight: 600, color: darkMode ? '#fff' : '#262626' }}>DB Admin</span></div><div style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between'
-              }}><span style={{ fontSize: 14, color: darkMode ? '#8c8cf8' : '#595959' }}>主题模式</span><Switch
-                  checkedChildren={<MoonOutlined />}
-                  unCheckedChildren={<SunOutlined />}
-                  checked={darkMode}
-                  onChange={toggleTheme}
-                  size="small"
-                /></div></div><Menu
-          theme={darkMode ? 'dark' : 'light'}
-          mode="inline"
-          selectedKeys={selectedKeys}
-          items={menuItems}
-          onClick={({ key }) => {
-            navigate(key)
-            setMobileMenuOpen(false)
-          }}
-          style={{
-            borderRight: 0,
-            background: 'transparent',
-            fontSize: 14,
-            flex: 1
-          }}
-        /></div></Drawer></Layout>
+        padding: '20px 0',
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100%'
+      }}><div style={{
+        padding: '0 20px 20px',
+        borderBottom: darkMode ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(0,0,0,0.06)'
+      }}><div style={{
+        display: 'flex',
+        alignItems: 'center',
+        marginBottom: 16
+      }}><DatabaseOutlined style={{ fontSize: 24, color: '#165DFF', marginRight: 12 }} /><span style={{ fontSize: 18, fontWeight: 600, color: darkMode ? '#fff' : '#262626' }}>DB Admin</span></div><div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between'
+      }}><span style={{ fontSize: 14, color: darkMode ? '#8c8cf8' : '#595959' }}>主题模式</span><Switch
+                checkedChildren={<MoonOutlined />}
+                unCheckedChildren={<SunOutlined />}
+                checked={darkMode}
+                onChange={toggleTheme}
+                size="small"
+              /></div></div><Menu
+            theme={darkMode ? 'dark' : 'light'}
+            mode="inline"
+            selectedKeys={selectedKeys}
+            items={menuItems}
+            onClick={({ key }) => {
+              navigate(key)
+              setMobileMenuOpen(false)
+            }}
+            style={{
+              borderRight: 0,
+              background: 'transparent',
+              fontSize: 14,
+              flex: 1
+            }}
+          /></div></Drawer>
+      <Modal
+        title="修改密码"
+        open={changePasswordModalVisible}
+        onCancel={() => setChangePasswordModalVisible(false)}
+        onOk={handleChangePassword}
+        width={500}
+      >
+        <Form form={changePasswordForm} layout="vertical">
+          <Form.Item
+            name="oldPassword"
+            label="原密码"
+            rules={[
+              { required: true, message: '请输入原密码' },
+            ]}
+          >
+            <Input.Password placeholder="请输入原密码" />
+          </Form.Item>
+          <Form.Item
+            name="newPassword"
+            label="新密码"
+            rules={[
+              { required: true, message: '请输入新密码' },
+              { min: 6, message: '密码长度至少6位' },
+              { pattern: /^(?=.*[a-zA-Z])(?=.*\d)/, message: '密码必须包含字母和数字' },
+            ]}
+          >
+            <Input.Password placeholder="请输入新密码（至少6位，包含字母和数字）" />
+          </Form.Item>
+          <Form.Item
+            name="confirmPassword"
+            label="确认新密码"
+            dependencies={['newPassword']}
+            rules={[
+              { required: true, message: '请确认新密码' },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (!value || getFieldValue('newPassword') === value) {
+                    return Promise.resolve()
+                  }
+                  return Promise.reject(new Error('两次输入的密码不一致'))
+                },
+              }),
+            ]}
+          >
+            <Input.Password placeholder="请再次输入新密码" />
+          </Form.Item>
+        </Form>
+      </Modal>
+    </Layout>
   )
 }
