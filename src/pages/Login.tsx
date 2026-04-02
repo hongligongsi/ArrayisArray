@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Form, Input, Button, Card, Typography, message, Modal } from 'antd'
+import { Form, Input, Button, Card, Typography, Modal, App } from 'antd'
 import { UserOutlined, LockOutlined, DatabaseOutlined } from '@ant-design/icons'
 import { authApi } from '../api'
 
@@ -12,6 +12,7 @@ export default function Login() {
   const [forgetPasswordLoading, setForgetPasswordLoading] = useState(false)
   const [forgetPasswordForm] = Form.useForm()
   const navigate = useNavigate()
+  const { message } = App.useApp()
 
   const onFinish = async (values: { username: string; password: string }) => {
     setLoading(true)
