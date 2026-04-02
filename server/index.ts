@@ -1758,6 +1758,36 @@ app.put('/api/auth/password', authMiddleware, async (req, res) => {
   } catch (err: any) { res.status(500).json({ error: err.message }) }
 })
 
+// 忘记密码接口
+app.post('/api/auth/forgot-password', async (req, res) => {
+  try {
+    const { email } = req.body
+    if (!email) return res.status(400).json({ error: 'Email is required' })
+    
+    // 检查邮箱是否存在
+    const rows = await query('SELECT id, username FROM admin_users WHERE email = ?', [email]) as any[]
+    if (!rows.length) {
+      // 为了安全，即使邮箱不存在也返回成功
+      return res.json({ success: true, message: 'If the email exists, a reset link will be sent' })
+    }
+    
+    // 生成重置令牌
+    const resetToken = crypto.randomBytes(32).toString('hex')
+    const resetTokenExpiry = new Date(Date.now() + 3600000) // 1小时后过期
+    
+    // 保存重置令牌到数据库
+    await query('UPDATE admin_users SET reset_token = ?, reset_token_expiry = ? WHERE id = ?', 
+      [resetToken, resetTokenExpiry, rows[0].id])
+    
+    // TODO: 发送邮件（这里仅模拟）
+    console.log(`Password reset token for ${email}: ${resetToken}`)
+    
+    res.json({ success: true, message: 'Password reset link has been sent to your email' })
+  } catch (err: any) { 
+    res.status(500).json({ error: err.message }) 
+  }
+})
+
 app.get('/api/dashboard/stats', authMiddleware, async (_req, res) => {
   try {
     const cached = queryCache.get('dashboard:stats')
