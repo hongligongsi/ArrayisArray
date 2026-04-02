@@ -224,16 +224,21 @@ async function initDatabase() {
         id INT PRIMARY KEY AUTO_INCREMENT,
         username VARCHAR(50) NOT NULL UNIQUE,
         password VARCHAR(255) NOT NULL,
+        email VARCHAR(100) DEFAULT '',
         nickname VARCHAR(100) DEFAULT '',
         role VARCHAR(50) DEFAULT 'admin',
         avatar VARCHAR(500) DEFAULT '',
         age INT DEFAULT 0,
         status TINYINT DEFAULT 1,
+        reset_token VARCHAR(255) DEFAULT NULL,
+        reset_token_expiry DATETIME DEFAULT NULL,
         last_login DATETIME,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
         INDEX idx_username (username),
-        INDEX idx_status (status)
+        INDEX idx_status (status),
+        INDEX idx_email (email),
+        INDEX idx_reset_token (reset_token)
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
     `)
 
@@ -489,9 +494,9 @@ async function initDatabase() {
     const [adminRows] = await conn.query('SELECT COUNT(*) as c FROM admin_users') as any
     if (adminRows[0].c === 0) {
       const hash = bcrypt.hashSync('admin123', 10)
-      await conn.query('INSERT INTO admin_users (username, password, nickname, role) VALUES (?, ?, ?, ?)', ['admin', hash, 'Admin', 'superadmin'])
+      await conn.query('INSERT INTO admin_users (username, password, email, nickname, role) VALUES (?, ?, ?, ?, ?)', ['admin', hash, 'admin@example.com', 'Admin', 'superadmin'])
       const hash2 = bcrypt.hashSync('user123', 10)
-      await conn.query('INSERT INTO admin_users (username, password, nickname, role) VALUES (?, ?, ?, ?)', ['user', hash2, 'User', 'user'])
+      await conn.query('INSERT INTO admin_users (username, password, email, nickname, role) VALUES (?, ?, ?, ?, ?)', ['user', hash2, 'user@example.com', 'User', 'user'])
     }
 
     const [userRows] = await conn.query('SELECT COUNT(*) as c FROM users') as any
