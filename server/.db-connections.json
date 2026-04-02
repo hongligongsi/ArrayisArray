@@ -1,0 +1,11 @@
+[
+  {
+    "name": "本地MySQL",
+    "host": "127.0.0.1",
+    "port": 3306,
+    "user": "root",
+    "password": "Whl624@329Srh",
+    "database": "db_admin_demo",
+    "id": "bb7ef0a2-0c4c-4dd4-a325-8bc8badfbf14"
+  }
+]
