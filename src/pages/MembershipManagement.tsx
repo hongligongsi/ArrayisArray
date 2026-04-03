@@ -139,7 +139,7 @@ const MembershipPage: React.FC = () => {
       title: '价格',
       dataIndex: 'price',
       key: 'price',
-      render: (price: number) => `¥${price.toFixed(2)}`,
+      render: (price: any) => `¥${typeof price === 'number' ? price.toFixed(2) : '0.00'}`,
     },
     {
       title: '时长',
