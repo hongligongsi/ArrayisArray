@@ -3,7 +3,7 @@ import { Card, Table, Button, Space, message, Modal, Form, Input, Checkbox, Popc
 import { PlusOutlined, EditOutlined, DeleteOutlined, SafetyOutlined } from '@ant-design/icons'
 import { permissionApi } from '../api'
 
-const { TabPane } = Tabs
+
 
 export default function PermissionManagement() {
   const [roles, setRoles] = useState<any[]>([])
@@ -188,38 +188,51 @@ export default function PermissionManagement() {
       </Row>
 
       <Card>
-        <Tabs activeKey={activeTab} onChange={setActiveTab}>
-          <TabPane tab="角色管理" key="roles">
-            <Space style={{ marginBottom: 16 }}>
-              <Button type="primary" icon={<PlusOutlined />} onClick={() => openRoleModal()}>新建角色</Button>
-            </Space>
-            <Table
-              columns={roleColumns}
-              dataSource={roles}
-              rowKey="id"
-              loading={loading}
-              scroll={{ x: 1100 }}
-              pagination={false}
-            />
-          </TabPane>
-
-          <TabPane tab="权限列表" key="permissions">
-            <Table
-              columns={[
-                { title: 'ID', dataIndex: 'id', width: 80 },
-                { title: '权限名称', dataIndex: 'name', width: 200 },
-                { title: '权限代码', dataIndex: 'code', width: 200 },
-                { title: '模块', dataIndex: 'module', width: 100, render: (module: string) => <Tag>{module}</Tag> },
-                { title: '描述', dataIndex: 'description', width: 300, ellipsis: true },
-              ]}
-              dataSource={permissions}
-              rowKey="id"
-              loading={loading}
-              scroll={{ x: 1000 }}
-              pagination={false}
-            />
-          </TabPane>
-        </Tabs>
+        <Tabs
+          activeKey={activeTab}
+          onChange={setActiveTab}
+          items={[
+            {
+              key: 'roles',
+              label: '角色管理',
+              children: (
+                <>
+                  <Space style={{ marginBottom: 16 }}>
+                    <Button type="primary" icon={<PlusOutlined />} onClick={() => openRoleModal()}>新建角色</Button>
+                  </Space>
+                  <Table
+                    columns={roleColumns}
+                    dataSource={roles}
+                    rowKey="id"
+                    loading={loading}
+                    scroll={{ x: 1100 }}
+                    pagination={false}
+                  />
+                </>
+              ),
+            },
+            {
+              key: 'permissions',
+              label: '权限列表',
+              children: (
+                <Table
+                  columns={[
+                    { title: 'ID', dataIndex: 'id', width: 80 },
+                    { title: '权限名称', dataIndex: 'name', width: 200 },
+                    { title: '权限代码', dataIndex: 'code', width: 200 },
+                    { title: '模块', dataIndex: 'module', width: 100, render: (module: string) => <Tag>{module}</Tag> },
+                    { title: '描述', dataIndex: 'description', width: 300, ellipsis: true },
+                  ]}
+                  dataSource={permissions}
+                  rowKey="id"
+                  loading={loading}
+                  scroll={{ x: 1000 }}
+                  pagination={false}
+                />
+              ),
+            },
+          ]}
+        />
       </Card>
 
       <Modal

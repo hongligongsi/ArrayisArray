@@ -25,7 +25,7 @@ export default function ToolManagement() {
       const res: any = await toolApi.getTools()
       setTools(Array.isArray(res?.tools) ? res.tools : [])
     } catch (err: any) {
-      appMessage.error(err.error || '????')
+      appMessage.error(err.error || '加载工具失败')
       setTools([])
     } finally {
       setLoading(false)
@@ -37,7 +37,7 @@ export default function ToolManagement() {
       const res: any = await toolApi.getToolConfigs(toolId)
       setConfigs(Array.isArray(res?.configs) ? res.configs : [])
     } catch (err: any) {
-      appMessage.error(err.error || '??????')
+      appMessage.error(err.error || '加载配置失败')
       setConfigs([])
     }
   }
@@ -45,10 +45,10 @@ export default function ToolManagement() {
   const handleDelete = async (id: number) => {
     try {
       await toolApi.deleteTool(id)
-      appMessage.success('?????')
+      appMessage.success('删除成功')
       loadTools()
     } catch (err: any) {
-      appMessage.error(err.error || '????')
+      appMessage.error(err.error || '删除失败')
     }
   }
 
@@ -69,25 +69,25 @@ export default function ToolManagement() {
       const values = await editForm.validateFields()
       if (editRecord.id) {
         await toolApi.updateTool(editRecord.id, values)
-        appMessage.success('?????')
+        appMessage.success('更新成功')
       } else {
         await toolApi.createTool(values)
-        appMessage.success('?????')
+        appMessage.success('创建成功')
       }
       setEditModalOpen(false)
       loadTools()
     } catch (err: any) {
-      appMessage.error(err.error || '????')
+      appMessage.error(err.error || '操作失败')
     }
   }
 
   const handleConfigUpdate = async (configKey: string, value: any) => {
     try {
       await toolApi.updateToolConfig(selectedTool.id, configKey, { config_value: value })
-      appMessage.success('?????')
+      appMessage.success('配置更新成功')
       loadConfigs(selectedTool.id)
     } catch (err: any) {
-      appMessage.error(err.error || '????')
+      appMessage.error(err.error || '配置更新失败')
     }
   }
 

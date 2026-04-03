@@ -616,7 +616,7 @@ export default function TableManager() {
       <Drawer
         title={`索引管理: ${currentTable}`}
         placement="right"
-        width={800}
+        size={800}
         open={indexesDrawerOpen}
         onClose={() => setIndexesDrawerOpen(false)}
         extra={
