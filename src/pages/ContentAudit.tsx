@@ -4,7 +4,6 @@ import { PlusOutlined, EditOutlined, DeleteOutlined, CheckOutlined, CloseOutline
 import { contentApi } from '../api'
 
 const { TextArea } = Input
-const { TabPane } = Tabs
 
 export default function ContentAudit() {
   const [articles, setArticles] = useState<any[]>([])
@@ -259,102 +258,119 @@ export default function ContentAudit() {
         </Col>
         <Col span={6}>
           <Card>
-            <Statistic title="草稿" value={articles.filter((a) => a.status === 'draft').length} valueStyle={{ color: '#8c8c8c' }} />
+            <Statistic title="草稿" value={articles.filter((a) => a.status === 'draft').length} styles={{ content: { color: '#8c8c8c' } }} />
           </Card>
         </Col>
         <Col span={6}>
           <Card>
-            <Statistic title="待审核" value={articles.filter((a) => a.status === 'pending').length} valueStyle={{ color: '#1890ff' }} />
+            <Statistic title="待审核" value={articles.filter((a) => a.status === 'pending').length} styles={{ content: { color: '#1890ff' } }} />
           </Card>
         </Col>
         <Col span={6}>
           <Card>
-            <Statistic title="已通过" value={articles.filter((a) => a.status === 'approved').length} valueStyle={{ color: '#52c41a' }} />
+            <Statistic title="已通过" value={articles.filter((a) => a.status === 'approved').length} styles={{ content: { color: '#52c41a' } }} />
           </Card>
         </Col>
       </Row>
 
       <Card>
-        <Tabs activeKey={activeTab} onChange={setActiveTab}>
-          <TabPane tab="文章管理" key="articles">
-            <Space style={{ marginBottom: 16 }}>
-              <Input.Search placeholder="搜索标题或内容" style={{ width: 200 }} onSearch={(value) => setFilters({ ...filters, search: value })} />
-              <Select placeholder="状态" style={{ width: 120 }} allowClear onChange={(value) => setFilters({ ...filters, status: value })}>
-                <Select.Option value="draft">草稿</Select.Option>
-                <Select.Option value="pending">待审核</Select.Option>
-                <Select.Option value="approved">已通过</Select.Option>
-                <Select.Option value="rejected">已拒绝</Select.Option>
-              </Select>
-              <Select placeholder="分类" style={{ width: 150 }} allowClear onChange={(value) => setFilters({ ...filters, category_id: value })}>
-                {categories.map((cat) => (
-                  <Select.Option key={cat.id} value={cat.id}>{cat.name}</Select.Option>
-                ))}
-              </Select>
-              <Button type="primary" icon={<PlusOutlined />} onClick={() => { setCurrentArticle(null); articleForm.resetFields(); setArticleModalOpen(true) }}>新建文章</Button>
-            </Space>
-            <Table
-              columns={articleColumns}
-              dataSource={articles}
-              rowKey="id"
-              loading={loading}
-              scroll={{ x: 1200 }}
-              pagination={{
-                current: page,
-                pageSize,
-                total,
-                showSizeChanger: true,
-                showTotal: (total) => `共 ${total} 条`,
-                onChange: (page, pageSize) => { setPage(page); setPageSize(pageSize) },
-              }}
-            />
-          </TabPane>
-
-          <TabPane tab="分类管理" key="categories">
-            <Space style={{ marginBottom: 16 }}>
-              <Button type="primary" icon={<PlusOutlined />} onClick={() => { categoryForm.resetFields(); setCategoryModalOpen(true) }}>新建分类</Button>
-            </Space>
-            <Table
-              columns={[
-                { title: 'ID', dataIndex: 'id', width: 80 },
-                { title: '名称', dataIndex: 'name', width: 200 },
-                { title: '描述', dataIndex: 'description', width: 300, ellipsis: true },
-                { title: '排序', dataIndex: 'sort_order', width: 100 },
-                { title: '创建时间', dataIndex: 'created_at', width: 160 },
-                {
-                  title: '操作',
-                  key: 'action',
-                  width: 100,
-                  render: (_: any, record: any) => (
-                    <Popconfirm title="确定删除？" onConfirm={() => handleDeleteCategory(record.id)}>
-                      <Button type="link" danger icon={<DeleteOutlined />}>删除</Button>
-                    </Popconfirm>
-                  ),
-                },
-              ]}
-              dataSource={categories}
-              rowKey="id"
-              pagination={false}
-            />
-          </TabPane>
-
-          <TabPane tab="审核日志" key="auditLogs">
-            <Table
-              columns={auditLogColumns}
-              dataSource={auditLogs}
-              rowKey="id"
-              loading={loading}
-              scroll={{ x: 1000 }}
-              pagination={{
-                current: page,
-                pageSize,
-                total,
-                showSizeChanger: true,
-                showTotal: (total) => `共 ${total} 条`,
-                onChange: (page, pageSize) => { setPage(page); setPageSize(pageSize) },
-              }}
-            />
-          </TabPane>
-        </Tabs>
+        <Tabs
+          activeKey={activeTab}
+          onChange={setActiveTab}
+          items={[
+            {
+              key: 'articles',
+              label: '文章管理',
+              children: (
+                <>
+                  <Space style={{ marginBottom: 16 }}>
+                    <Input.Search placeholder="搜索标题或内容" style={{ width: 200 }} onSearch={(value) => setFilters({ ...filters, search: value })} />
+                    <Select placeholder="状态" style={{ width: 120 }} allowClear onChange={(value) => setFilters({ ...filters, status: value })}>
+                      <Select.Option value="draft">草稿</Select.Option>
+                      <Select.Option value="pending">待审核</Select.Option>
+                      <Select.Option value="approved">已通过</Select.Option>
+                      <Select.Option value="rejected">已拒绝</Select.Option>
+                    </Select>
+                    <Select placeholder="分类" style={{ width: 150 }} allowClear onChange={(value) => setFilters({ ...filters, category_id: value })}>
+                      {categories.map((cat) => (
+                        <Select.Option key={cat.id} value={cat.id}>{cat.name}</Select.Option>
+                      ))}
+                    </Select>
+                    <Button type="primary" icon={<PlusOutlined />} onClick={() => { setCurrentArticle(null); articleForm.resetFields(); setArticleModalOpen(true) }}>新建文章</Button>
+                  </Space>
+                  <Table
+                    columns={articleColumns}
+                    dataSource={articles}
+                    rowKey="id"
+                    loading={loading}
+                    scroll={{ x: 1200 }}
+                    pagination={{
+                      current: page,
+                      pageSize,
+                      total,
+                      showSizeChanger: true,
+                      showTotal: (total) => `共 ${total} 条`,
+                      onChange: (page, pageSize) => { setPage(page); setPageSize(pageSize) },
+                    }}
+                  />
+                </>
+              ),
+            },
+            {
+              key: 'categories',
+              label: '分类管理',
+              children: (
+                <>
+                  <Space style={{ marginBottom: 16 }}>
+                    <Button type="primary" icon={<PlusOutlined />} onClick={() => { categoryForm.resetFields(); setCategoryModalOpen(true) }}>新建分类</Button>
+                  </Space>
+                  <Table
+                    columns={[
+                      { title: 'ID', dataIndex: 'id', width: 80 },
+                      { title: '名称', dataIndex: 'name', width: 200 },
+                      { title: '描述', dataIndex: 'description', width: 300, ellipsis: true },
+                      { title: '排序', dataIndex: 'sort_order', width: 100 },
+                      { title: '创建时间', dataIndex: 'created_at', width: 160 },
+                      {
+                        title: '操作',
+                        key: 'action',
+                        width: 100,
+                        render: (_: any, record: any) => (
+                          <Popconfirm title="确定删除？" onConfirm={() => handleDeleteCategory(record.id)}>
+                            <Button type="link" danger icon={<DeleteOutlined />}>删除</Button>
+                          </Popconfirm>
+                        ),
+                      },
+                    ]}
+                    dataSource={categories}
+                    rowKey="id"
+                    pagination={false}
+                  />
+                </>
+              ),
+            },
+            {
+              key: 'auditLogs',
+              label: '审核日志',
+              children: (
+                <Table
+                  columns={auditLogColumns}
+                  dataSource={auditLogs}
+                  rowKey="id"
+                  loading={loading}
+                  pagination={{
+                    current: page,
+                    pageSize,
+                    total,
+                    showSizeChanger: true,
+                    showTotal: (total) => `共 ${total} 条`,
+                    onChange: (page, pageSize) => { setPage(page); setPageSize(pageSize) },
+                  }}
+                />
+              ),
+            },
+          ]}
+        />
       </Card>
 
       <Modal

@@ -4,7 +4,6 @@ import { PlusOutlined, EditOutlined, DeleteOutlined, UserOutlined, GiftOutlined,
 import { membershipApi } from '../api'
 import dayjs from 'dayjs'
 
-const { TabPane } = Tabs
 const { Option } = Select
 const { RangePicker } = DatePicker
 
@@ -210,9 +209,9 @@ const MembershipPage: React.FC = () => {
       title: '会员状态',
       key: 'membership',
       render: (_, record: any) => (
-        <Button 
-          type="primary" 
-          size="small" 
+        <Button
+          type="primary"
+          size="small"
           onClick={() => handlePurchaseMembership(record.id, 2)}
         >
           购买会员
@@ -285,65 +284,82 @@ const MembershipPage: React.FC = () => {
         <h1 style={{ marginBottom: 16, fontSize: '1.5rem', fontWeight: 600 }}>会员管理</h1>
       </div>
 
-      <Tabs activeKey={activeTab} onChange={setActiveTab}>
-        <TabPane tab={<><ShopOutlined /> 套餐管理</>} key="plans">
-          <Card
-            title="会员套餐"
-            extra={
-              <Button type="primary" icon={<PlusOutlined />} onClick={handleAddPlan}>
-                添加套餐
-              </Button>
-            }
-          >
-            <Table
-              columns={planColumns}
-              dataSource={plans}
-              rowKey="id"
-              loading={loading}
-            />
-          </Card>
-        </TabPane>
-
-        <TabPane tab={<><UserOutlined /> 用户会员</>} key="users">
-          <Card title="用户会员管理">
-            <Table
-              columns={userColumns}
-              dataSource={users}
-              rowKey="id"
-              loading={loading}
-            />
-          </Card>
-        </TabPane>
-
-        <TabPane tab={<><GiftOutlined /> 折扣规则</>} key="discounts">
-          <Card
-            title="折扣规则"
-            extra={
-              <Button type="primary" icon={<PlusOutlined />}>
-                添加折扣
-              </Button>
-            }
-          >
-            <Table
-              columns={discountColumns}
-              dataSource={discounts}
-              rowKey="id"
-              loading={loading}
-            />
-          </Card>
-        </TabPane>
-
-        <TabPane tab={<><LineChartOutlined /> 使用统计</>} key="usage">
-          <Card title="会员使用统计">
-            <Table
-              columns={usageColumns}
-              dataSource={usage}
-              rowKey="action"
-              loading={loading}
-            />
-          </Card>
-        </TabPane>
-      </Tabs>
+      <Tabs
+        activeKey={activeTab}
+        onChange={setActiveTab}
+        items={[
+          {
+            key: 'plans',
+            label: <><ShopOutlined /> 套餐管理</>,
+            children: (
+              <Card
+                title="会员套餐"
+                extra={
+                  <Button type="primary" icon={<PlusOutlined />} onClick={handleAddPlan}>
+                    添加套餐
+                  </Button>
+                }
+              >
+                <Table
+                  columns={planColumns}
+                  dataSource={plans}
+                  rowKey="id"
+                  loading={loading}
+                />
+              </Card>
+            ),
+          },
+          {
+            key: 'users',
+            label: <><UserOutlined /> 用户会员</>,
+            children: (
+              <Card title="用户会员管理">
+                <Table
+                  columns={userColumns}
+                  dataSource={users}
+                  rowKey="id"
+                  loading={loading}
+                />
+              </Card>
+            ),
+          },
+          {
+            key: 'discounts',
+            label: <><GiftOutlined /> 折扣规则</>,
+            children: (
+              <Card
+                title="折扣规则"
+                extra={
+                  <Button type="primary" icon={<PlusOutlined />}>
+                    添加折扣
+                  </Button>
+                }
+              >
+                <Table
+                  columns={discountColumns}
+                  dataSource={discounts}
+                  rowKey="id"
+                  loading={loading}
+                />
+              </Card>
+            ),
+          },
+          {
+            key: 'usage',
+            label: <><LineChartOutlined /> 使用统计</>,
+            children: (
+              <Card title="会员使用统计">
+                <Table
+                  columns={usageColumns}
+                  dataSource={usage}
+                  rowKey="action"
+                  loading={loading}
+                />
+              </Card>
+            ),
+          },
+        ]}
+      />
 
       <Modal
         title={currentPlan ? '编辑套餐' : '添加套餐'}

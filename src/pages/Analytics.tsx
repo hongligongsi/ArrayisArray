@@ -73,13 +73,13 @@ const AnalyticsPage: React.FC = () => {
         try {
             if (activeTab === 'performance') {
                 const response = await analyticsApi.getPerformance({ timeRange })
-                setPerformanceData(response.data)
+                setPerformanceData(response)
             } else if (activeTab === 'trends') {
                 const response = await analyticsApi.getToolTrends({ timeRange })
-                setToolTrendData(response.data)
+                setToolTrendData(response)
             } else if (activeTab === 'anomalies') {
                 const response = await analyticsApi.getAnomalies({ timeRange })
-                setAnomalyData(response.data)
+                setAnomalyData(response)
             }
         } catch (error) {
             console.error('Failed to load analytics data:', error)

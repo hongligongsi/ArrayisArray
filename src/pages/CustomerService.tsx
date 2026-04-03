@@ -152,17 +152,17 @@ export default function CustomerService() {
         </Col>
         <Col span={6}>
           <Card>
-            <Statistic title="待处理" value={tickets.filter((t) => t.status === 'open').length} valueStyle={{ color: '#1890ff' }} />
+            <Statistic title="待处理" value={tickets.filter((t) => t.status === 'open').length} styles={{ content: { color: '#1890ff' } }} />
           </Card>
         </Col>
         <Col span={6}>
           <Card>
-            <Statistic title="处理中" value={tickets.filter((t) => t.status === 'in_progress').length} valueStyle={{ color: '#52c41a' }} />
+            <Statistic title="处理中" value={tickets.filter((t) => t.status === 'in_progress').length} styles={{ content: { color: '#52c41a' } }} />
           </Card>
         </Col>
         <Col span={6}>
           <Card>
-            <Statistic title="已解决" value={tickets.filter((t) => t.status === 'resolved').length} valueStyle={{ color: '#8c8c8c' }} />
+            <Statistic title="已解决" value={tickets.filter((t) => t.status === 'resolved').length} styles={{ content: { color: '#8c8c8c' } }} />
           </Card>
         </Col>
       </Row>

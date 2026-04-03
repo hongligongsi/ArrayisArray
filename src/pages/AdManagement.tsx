@@ -4,7 +4,6 @@ import { DeleteOutlined, EditOutlined, PlusOutlined, DollarOutlined, BarChartOut
 import { adApi } from '../api'
 import dayjs from 'dayjs'
 
-const { TabPane } = Tabs
 const { Option } = Select
 const { RangePicker } = DatePicker
 const { Panel } = Collapse
@@ -171,54 +170,68 @@ const AdManagement: React.FC = () => {
         <h1 style={{ marginBottom: 16, fontSize: '1.5rem', fontWeight: 600 }}>广告管理</h1>
       </div>
 
-      <Tabs activeKey={activeTab} onChange={setActiveTab}>
-        <TabPane tab={<><DollarOutlined /> 广告管理</>} key="ads">
-          <Card
-            title="广告列表"
-            extra={
-              <Button type="primary" icon={<PlusOutlined />} onClick={() => openEditModal({})}>
-                新增广告
-              </Button>
-            }
-          >
-            <Table
-              columns={adColumns}
-              dataSource={ads}
-              rowKey="id"
-              loading={loading}
-            />
-          </Card>
-        </TabPane>
-
-        <TabPane tab={<><ExperimentOutlined /> A/B测试</>} key="ab-tests">
-          <Card
-            title="A/B测试管理"
-            extra={
-              <Button type="primary" icon={<PlusOutlined />} onClick={() => setTestModalOpen(true)}>
-                新增测试
-              </Button>
-            }
-          >
-            <Table
-              columns={testColumns}
-              dataSource={tests}
-              rowKey="id"
-              loading={loading}
-            />
-          </Card>
-        </TabPane>
-
-        <TabPane tab={<><BarChartOutlined /> 广告统计</>} key="stats">
-          <Card title="广告统计数据">
-            <Table
-              columns={statColumns}
-              dataSource={stats}
-              rowKey="id"
-              loading={loading}
-            />
-          </Card>
-        </TabPane>
-      </Tabs>
+      <Tabs
+        activeKey={activeTab}
+        onChange={setActiveTab}
+        items={[
+          {
+            key: 'ads',
+            label: <><DollarOutlined /> 广告管理</>,
+            children: (
+              <Card
+                title="广告列表"
+                extra={
+                  <Button type="primary" icon={<PlusOutlined />} onClick={() => openEditModal({})}>
+                    新增广告
+                  </Button>
+                }
+              >
+                <Table
+                  columns={adColumns}
+                  dataSource={ads}
+                  rowKey="id"
+                  loading={loading}
+                />
+              </Card>
+            ),
+          },
+          {
+            key: 'ab-tests',
+            label: <><ExperimentOutlined /> A/B测试</>,
+            children: (
+              <Card
+                title="A/B测试管理"
+                extra={
+                  <Button type="primary" icon={<PlusOutlined />} onClick={() => setTestModalOpen(true)}>
+                    新增测试
+                  </Button>
+                }
+              >
+                <Table
+                  columns={testColumns}
+                  dataSource={tests}
+                  rowKey="id"
+                  loading={loading}
+                />
+              </Card>
+            ),
+          },
+          {
+            key: 'stats',
+            label: <><BarChartOutlined /> 广告统计</>,
+            children: (
+              <Card title="广告统计数据">
+                <Table
+                  columns={statColumns}
+                  dataSource={stats}
+                  rowKey="id"
+                  loading={loading}
+                />
+              </Card>
+            ),
+          },
+        ]}
+      />
 
       <Modal
         title={editRecord?.id ? '编辑广告' : '新增广告'}

@@ -1803,11 +1803,12 @@ app.get('/api/dashboard/stats', authMiddleware, async (_req, res) => {
   try {
     const cached = queryCache.get('dashboard:stats')
     if (cached) return res.json(cached)
-    const [tables] = await query("SELECT TABLE_NAME as tableName, TABLE_ROWS as rowCount, TABLE_COMMENT as tableComment, ENGINE as engine, CREATE_TIME as createTime FROM information_schema.TABLES WHERE TABLE_SCHEMA = ? AND TABLE_TYPE = 'BASE TABLE'", [DB_NAME]) as any[]
-    let totalRows = 0; tables.forEach((t: any) => { totalRows += t.rowCount || 0 })
-    const [opToday] = await query("SELECT COUNT(*) as c FROM operation_logs WHERE DATE(created_at) = CURDATE()") as any[]
-    const [errToday] = await query("SELECT COUNT(*) as c FROM error_logs WHERE DATE(created_at) = CURDATE()") as any[]
-    const result = { totalTables: tables.length, totalRows, operationLogsToday: opToday[0].c, errorLogsToday: errToday[0].c, tableList: tables }
+    const tables = await query("SELECT TABLE_NAME as tableName, TABLE_ROWS as rowCount, TABLE_COMMENT as tableComment, ENGINE as engine, CREATE_TIME as createTime FROM information_schema.TABLES WHERE TABLE_SCHEMA = ? AND TABLE_TYPE = 'BASE TABLE'", [DB_NAME]) as any[]
+    let totalRows = 0; (tables || []).forEach((t: any) => { totalRows += t.rowCount || 0 })
+    const opToday = await query("SELECT COUNT(*) as c FROM operation_logs WHERE DATE(created_at) = CURDATE()") as any[]
+    const errToday = await query("SELECT COUNT(*) as c FROM error_logs WHERE DATE(created_at) = CURDATE()") as any[]
+    const tableList = tables || []
+    const result = { totalTables: tableList.length, totalRows, operationLogsToday: opToday?.[0]?.c || 0, errorLogsToday: errToday?.[0]?.c || 0, tableList }
     queryCache.set('dashboard:stats', result)
     res.json(result)
   } catch (err: any) { res.status(500).json({ error: err.message }) }
@@ -2298,7 +2299,7 @@ app.get('/api/routes', authMiddleware, (_req, res) => {
 // 会员套餐API
 app.get('/api/membership/plans', authMiddleware, async (_req, res) => {
   try {
-    const [plans] = await query('SELECT * FROM membership_plans WHERE is_enabled = TRUE ORDER BY sort_order') as any[]
+    const plans = await query('SELECT * FROM membership_plans WHERE is_enabled = TRUE ORDER BY sort_order') as any[]
     res.json({ plans })
   } catch (err: any) { res.status(500).json({ error: err.message }) }
 })
@@ -2385,7 +2386,7 @@ app.post('/api/membership/cancel', authMiddleware, async (req, res) => {
 // 折扣规则API
 app.get('/api/membership/discounts', authMiddleware, async (_req, res) => {
   try {
-    const [discounts] = await query('SELECT * FROM discount_rules WHERE is_active = TRUE ORDER BY id') as any[]
+    const discounts = await query('SELECT * FROM discount_rules WHERE is_active = TRUE ORDER BY id') as any[]
     res.json({ discounts })
   } catch (err: any) { res.status(500).json({ error: err.message }) }
 })
@@ -2414,7 +2415,7 @@ app.get('/api/membership/usage', authMiddleware, async (req, res) => {
     if (startDate) { where += ' AND timestamp >= ?'; params.push(startDate) }
     if (endDate) { where += ' AND timestamp <= ?'; params.push(endDate + ' 23:59:59') }
 
-    const [usage] = await query(`SELECT action, resource, COUNT(*) as count FROM membership_usage ${where} GROUP BY action, resource ORDER BY count DESC`, params) as any[]
+    const usage = await query(`SELECT action, resource, COUNT(*) as count FROM membership_usage ${where} GROUP BY action, resource ORDER BY count DESC`, params) as any[]
     res.json({ usage })
   } catch (err: any) { res.status(500).json({ error: err.message }) }
 })
@@ -4386,13 +4387,13 @@ app.get('/api/api-calls/stats', authMiddleware, async (req, res) => {
 app.get('/api/health', async (req, res) => {
   try {
     const startTime = Date.now()
-    const conn = await getConnection()
+    const conn = await masterPool.getConnection()
     await conn.ping()
-    await conn.end()
+    await conn.release()
     const responseTime = Date.now() - startTime
 
     // 记录健康检查结果
-    const healthCheckConn = await getConnection()
+    const healthCheckConn = await masterPool.getConnection()
     await healthCheckConn.query(
       'INSERT INTO health_checks (check_type, status, message, response_time) VALUES (?, ?, ?, ?)',
       ['system', 'healthy', 'System health check passed', responseTime]
@@ -4411,12 +4412,12 @@ app.get('/api/health', async (req, res) => {
   } catch (error: any) {
     // 记录健康检查失败
     try {
-      const healthCheckConn = await getConnection()
+      const healthCheckConn = await masterPool.getConnection()
       await healthCheckConn.query(
         'INSERT INTO health_checks (check_type, status, message, response_time) VALUES (?, ?, ?, ?)',
         ['system', 'critical', error.message || 'System health check failed', 0]
       )
-      await healthCheckConn.end()
+      await healthCheckConn.release()
     } catch (e) {
       // 忽略健康检查记录失败
     }
@@ -4432,11 +4433,11 @@ app.get('/api/health', async (req, res) => {
 // 运维优化 - 健康检查管理
 app.get('/api/health-checks', authMiddleware, async (req, res) => {
   try {
-    const conn = await getConnection()
+    const conn = await masterPool.getConnection()
     const [rows] = await conn.query(
       'SELECT * FROM health_checks ORDER BY created_at DESC LIMIT 100'
     )
-    await conn.end()
+    await conn.release()
     res.json({ healthChecks: rows })
   } catch (error: any) {
     res.status(500).json({ error: error.message })
@@ -4446,9 +4447,9 @@ app.get('/api/health-checks', authMiddleware, async (req, res) => {
 // 运维优化 - 自动备份管理
 app.get('/api/backup/configs', authMiddleware, async (req, res) => {
   try {
-    const conn = await getConnection()
+    const conn = await masterPool.getConnection()
     const [rows] = await conn.query('SELECT * FROM backup_configs ORDER BY id')
-    await conn.end()
+    await conn.release()
     res.json({ configs: rows })
   } catch (error: any) {
     res.status(500).json({ error: error.message })
@@ -4458,12 +4459,12 @@ app.get('/api/backup/configs', authMiddleware, async (req, res) => {
 app.post('/api/backup/configs', authMiddleware, async (req, res) => {
   try {
     const { name, type, schedule, time, retention_days, is_active } = req.body
-    const conn = await getConnection()
+    const conn = await masterPool.getConnection()
     const [result] = await conn.query(
       'INSERT INTO backup_configs (name, type, schedule, time, retention_days, is_active) VALUES (?, ?, ?, ?, ?, ?)',
       [name, type, schedule, time || '00:00', retention_days || 7, is_active !== false]
     )
-    await conn.end()
+    await conn.release()
     res.json({ id: result.insertId, success: true })
   } catch (error: any) {
     res.status(500).json({ error: error.message })
@@ -4472,11 +4473,11 @@ app.post('/api/backup/configs', authMiddleware, async (req, res) => {
 
 app.get('/api/backup/records', authMiddleware, async (req, res) => {
   try {
-    const conn = await getConnection()
+    const conn = await masterPool.getConnection()
     const [rows] = await conn.query(
       'SELECT * FROM backup_records ORDER BY created_at DESC LIMIT 100'
     )
-    await conn.end()
+    await conn.release()
     res.json({ records: rows })
   } catch (error: any) {
     res.status(500).json({ error: error.message })
@@ -4486,9 +4487,9 @@ app.get('/api/backup/records', authMiddleware, async (req, res) => {
 // 运维优化 - 版本管理
 app.get('/api/versions', authMiddleware, async (req, res) => {
   try {
-    const conn = await getConnection()
+    const conn = await masterPool.getConnection()
     const [rows] = await conn.query('SELECT * FROM app_versions ORDER BY created_at DESC')
-    await conn.end()
+    await conn.release()
     res.json({ versions: rows })
   } catch (error: any) {
     res.status(500).json({ error: error.message })
@@ -4498,7 +4499,7 @@ app.get('/api/versions', authMiddleware, async (req, res) => {
 app.post('/api/versions', authMiddleware, async (req, res) => {
   try {
     const { version, description, changes } = req.body
-    const conn = await getConnection()
+    const conn = await masterPool.getConnection()
 
     // 先将所有版本设置为非当前版本
     await conn.query('UPDATE app_versions SET is_current = FALSE')
@@ -4509,7 +4510,7 @@ app.post('/api/versions', authMiddleware, async (req, res) => {
       [version, description, changes]
     )
 
-    await conn.end()
+    await conn.release()
     res.json({ id: result.insertId, success: true })
   } catch (error: any) {
     res.status(500).json({ error: error.message })
@@ -4519,11 +4520,11 @@ app.post('/api/versions', authMiddleware, async (req, res) => {
 // 运维优化 - 系统监控
 app.get('/api/system/metrics', authMiddleware, async (req, res) => {
   try {
-    const conn = await getConnection()
+    const conn = await masterPool.getConnection()
     const [rows] = await conn.query(
       'SELECT * FROM system_metrics ORDER BY created_at DESC LIMIT 200'
     )
-    await conn.end()
+    await conn.release()
     res.json({ metrics: rows })
   } catch (error: any) {
     res.status(500).json({ error: error.message })
@@ -4560,7 +4561,7 @@ async function start() {
   setInterval(async () => {
     try {
       const os = require('os')
-      const conn = await getConnection()
+      const conn = await masterPool.getConnection()
 
       // 记录CPU使用率
       const cpus = os.cpus()
@@ -4585,7 +4586,7 @@ async function start() {
         ['memory', memoryUsage, '%']
       )
 
-      await conn.end()
+      await conn.release()
     } catch (error) {
       console.error('Failed to record system metrics:', error)
     }
