@@ -144,7 +144,7 @@ export default function MainLayout() {
           background: darkMode ? 'linear-gradient(135deg, #165DFF 0%, #0d6efd 100%)' : 'linear-gradient(135deg, #165DFF 0%, #0d6efd 100%)'
         }}>
           <DatabaseOutlined style={{ fontSize: 22, color: '#fff' }} />
-          {!collapsed && <span style={{ color: '#fff', marginLeft: 12, fontWeight: 600, fontSize: 17, whiteSpace: 'nowrap', letterSpacing: '0.5px' }}>DataHub</span>}
+          {!collapsed && <span style={{ color: '#fff', marginLeft: 12, fontWeight: 600, fontSize: 17, whiteSpace: 'nowrap', letterSpacing: '0.5px' }}>HWH-DataHub</span>}
         </div>
         <Menu
           theme={darkMode ? 'dark' : 'light'}
@@ -284,7 +284,7 @@ export default function MainLayout() {
         display: 'flex',
         alignItems: 'center',
         marginBottom: 16
-      }}><DatabaseOutlined style={{ fontSize: 24, color: '#165DFF', marginRight: 12 }} /><span style={{ fontSize: 18, fontWeight: 600, color: darkMode ? '#fff' : '#262626' }}>DataHub</span></div><div style={{
+      }}><DatabaseOutlined style={{ fontSize: 24, color: '#165DFF', marginRight: 12 }} /><span style={{ fontSize: 18, fontWeight: 600, color: darkMode ? '#fff' : '#262626' }}>HWH-DataHub</span></div><div style={{
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between'

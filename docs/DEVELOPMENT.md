@@ -2,7 +2,7 @@
 
 ## 项目概述
 
-DataHub 是一个基于 React + TypeScript + Node.js 的全栈数据库管理系统。
+HWH-DataHub 是一个基于 React + TypeScript + Node.js 的全栈数据库管理系统。
 
 ## 技术栈
 

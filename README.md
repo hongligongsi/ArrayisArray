@@ -1,8 +1,8 @@
-# DataHub - 数据库管理系统
+# HWH-DataHub - 数据库管理系统
 
 一个功能强大、界面友好的数据库管理系统，提供全方位的数据库操作和监控能力。
 
-![DataHub](https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=modern%20database%20management%20dashboard%20interface%20with%20charts%20and%20tables&image_size=landscape_16_9)
+![HWH-DataHub](https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=modern%20database%20management%20dashboard%20interface%20with%20charts%20and%20tables&image_size=landscape_16_9)
 
 ## 🚀 技术栈
 
@@ -180,11 +180,12 @@ npm run preview
 
 ### 当前版本
 
-- **版本号**: 2026.04.06
+- **版本号**: 2026.04.09
 - **发布日期**: 2026年4月3日
 
 ### 更新日志
 
+- **2026.04.09**: 项目重命名为HWH-DataHub，更新项目标识
 - **2026.04.08**: 更新项目版本，添加Git上传脚本
 - **2026.04.07**: 修复忘记密码接口安全风险，使用bcrypt哈希存储重置令牌，添加令牌使用状态控制
 - **2026.04.06**: 添加忘记密码功能，修复TypeScript类型错误

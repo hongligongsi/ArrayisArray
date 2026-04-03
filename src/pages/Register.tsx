@@ -37,7 +37,7 @@ export default function Register() {
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
           <DatabaseOutlined style={{ fontSize: 48, color: '#f5576c', marginBottom: 16 }} />
           <Title level={3} style={{ marginBottom: 4 }}>注册账号</Title>
-          <Text type="secondary">DataHub 数据库管理系统</Text>
+          <Text type="secondary">HWH-DataHub 数据库管理系统</Text>
         </div>
         <Form name="register" onFinish={onFinish} size="large" autoComplete="off">
           <Form.Item name="username" rules={[{ required: true, message: '请输入用户名' }]}>
