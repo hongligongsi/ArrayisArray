@@ -546,7 +546,7 @@ async function initDatabase() {
     const [articleRows] = await conn.query('SELECT COUNT(*) as c FROM articles') as any
     if (articleRows[0].c === 0) {
       await conn.query(`INSERT INTO articles (title, content, category_id, cover_image, author_id, status, view_count) VALUES
-        ('欢迎来到DB Admin', 'DB Admin是一个强大的数据库管理工具，支持MySQL、PostgreSQL等多种数据库。', 1, 'https://via.placeholder.com/800x400', 1, 'approved', 150),
+        ('欢迎来到DataHub', 'DataHub是一个强大的数据库管理工具，支持MySQL、PostgreSQL等多种数据库。', 1, 'https://via.placeholder.com/800x400', 1, 'approved', 150),
         ('如何使用SQL查询', 'SQL查询功能可以帮助您快速查询和分析数据。支持SELECT、INSERT、UPDATE、DELETE等操作。', 5, 'https://via.placeholder.com/800x400', 1, 'approved', 89),
         ('数据可视化介绍', '仪表板提供丰富的数据可视化功能，包括饼图、柱状图、折线图等多种图表类型。', 2, 'https://via.placeholder.com/800x400', 2, 'approved', 120),
         ('用户管理指南', '用户管理功能支持创建、编辑、删除用户，以及重置密码等操作。', 5, 'https://via.placeholder.com/800x400', 1, 'pending', 0),
@@ -1381,7 +1381,7 @@ async function initDatabase() {
       ('daily_free_limit', '10', 'number', '每日免费使用次数限制'),
       ('enable_registration', 'true', 'boolean', '是否开放注册'),
       ('maintenance_mode', 'false', 'boolean', '维护模式'),
-      ('announcement', '欢迎使用DB Admin工具类应用！', 'string', '系统公告')`)
+      ('announcement', '欢迎使用DataHub工具类应用！', 'string', '系统公告')`)
     }
 
     console.log('Database initialized!')

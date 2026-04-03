@@ -1,8 +1,8 @@
-# DB Admin - 数据库管理系统
+# DataHub - 数据库管理系统
 
 一个功能强大、界面友好的数据库管理系统，提供全方位的数据库操作和监控能力。
 
-![DB Admin](https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=modern%20database%20management%20dashboard%20interface%20with%20charts%20and%20tables&image_size=landscape_16_9)
+![DataHub](https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=modern%20database%20management%20dashboard%20interface%20with%20charts%20and%20tables&image_size=landscape_16_9)
 
 ## 🚀 技术栈
 

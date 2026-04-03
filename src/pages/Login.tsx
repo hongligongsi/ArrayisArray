@@ -60,7 +60,7 @@ export default function Login() {
       >
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
           <DatabaseOutlined style={{ fontSize: 48, color: '#667eea', marginBottom: 16 }} />
-          <Title level={3} style={{ marginBottom: 4 }}>DB Admin</Title>
+          <Title level={3} style={{ marginBottom: 4 }}>DataHub</Title>
           <Text type="secondary">数据库管理系统</Text>
         </div>
         <Form name="login" onFinish={onFinish} size="large" autoComplete="off">
